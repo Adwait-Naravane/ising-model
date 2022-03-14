@@ -69,7 +69,7 @@ function diagram(func::Function;
         PyPlot.xlabel("Temperature")
         PyPlot.ylabel("Mean susceptibility")
         PyPlot.ylim(0,0.7)
-        PyPlot.savefig("diag_susceptibility_$(name)_H=$h.png")
+        PyPlot.savefig("diag_susceptibility_$(name)_H=$(h)_size=$(size).png")
         PyPlot.close()
     end
 
