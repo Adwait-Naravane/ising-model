@@ -39,22 +39,22 @@ end
 
 # Phase diagram (magnetization by temperature) using given algorithm
 function diagram(func::Function;
-                 size::Integer      = 30,    # Size of the grid
+                 size::Integer      = 50,    # Size of the grid
                  ensembles::Integer = 50,    # Number of ensembles
                  h::Float64         = 0.0,   # External field
                  mintemp::Float64   = 0.5,   # Starting temperature
-                 step::Float64      = 0.02,   # Step of temperatures
+                 step::Float64      = 0.05,   # Step of temperatures
                  maxtemp::Float64   = 4.0,   # Final temperature
-                 iters::Integer     = 180, # Number of the iterations
-                 plot::Bool         = false,  # Plot flag
-                 verbose::Bool      = false)  # Verbose flag
+                 iters::Integer     = 150, # Number of the iterations
+                 plot::Bool         = true,  # Plot flag
+                 verbose::Bool      = true)  # Verbose flag
 
     name  = namefunc(func)
     temps = Float64[]
     mags  = Float64[]
     for t in mintemp:step:maxtemp
-        m = mean([func(grid = spingrid(size), h=h, temp=t, iters=iters, plot=false, verbose=false)[end] for i in 1:ensembles])
-        if verbose println("(T=$t) Avg. susceptibility after $name: $m") end
+        m = mean([func(spingrid(size), h=h, temp=t, iters=iters, plot=false, verbose=false)[end] for i in 1:ensembles])
+        if verbose println("(T=$t) Avg. magnetization after $name: $m") end
 
         push!(temps, t)
         push!(mags,  m)
@@ -67,9 +67,8 @@ function diagram(func::Function;
         PyPlot.grid()
         PyPlot.title("Phase Diagram ($name for size $size and h=$h)")
         PyPlot.xlabel("Temperature")
-        PyPlot.ylabel("Mean susceptibility")
-        PyPlot.ylim(0,0.7)
-        PyPlot.savefig("diag_susceptibility_$(name)_H=$(h)_size=$(size).png")
+        PyPlot.ylabel("Mean magnetization")
+        PyPlot.savefig("diag_magnetisation_$(name)_H=$(h)_size=$(size).png")
         PyPlot.close()
     end
 
@@ -78,4 +77,4 @@ end
 
 
 
-#diagram(wolff!)
+diagram(wolff!)
