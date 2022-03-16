@@ -70,3 +70,14 @@ def calcEnergy(config):
             energy += Energy_spin(config, i, j)
     return energy/4
 
+def auto_corr_fast(M, kappa):   
+#   The autocorrelation has to be truncated at some point so there are enough
+#   data points constructing each lag. Let kappa be the cutoff
+    M = M - np.mean(M)
+    N = len(M)
+    fvi = np.fft.fft(M, n=2*N)
+#   G is the autocorrelation curve
+    G = np.real( np.fft.ifft( fvi * np.conjugate(fvi) )[:N] )
+    G /= N - np.arange(N); G /= G[0]
+    G = G[:kappa]
+    return G

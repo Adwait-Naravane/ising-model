@@ -17,13 +17,13 @@ function recursion_wolff!(grid::Array{Int, 2},         # Spin grig
     end
 end
 
-function wolff!(grid::Array{Int, 2};
+function wolff!(grid::Array{Int, 2} = spingrid(50);
                 h::Float64           = 0.0,  # External field
                 temp::Float64        = 1.0,  # Temperature
                 iters::Integer       = 30,   # Number of iterations
-                plot::Bool           = false, # Plot flag
+                plot::Bool           = true, # Plot flag
                 verbose::Bool        = true) # Verbose flag
-
+        
         m = Float64[]
         for i in 1:iters
 # Randomly pick a position within the grid
@@ -39,14 +39,14 @@ function wolff!(grid::Array{Int, 2};
                 ΔE = -2h*clusterspin(grid, cluster)
 # Change spin accordingly
                 if ΔE <= 0 || rand() < exp(-ΔE) flip!(grid, cluster) end
-                push!(m, susceptibility(grid)/temp)
+                push!(m, magnetization(grid))
         end
 
         if verbose println("(T=$temp) Wolff ended with magnetization $(m[end]) after $iters iterations") end
         if plot
-                PyPlot.plot(1:length(m), m, "o", color="blue")
+                PyPlot.scatter(1:length(m), m, color="blue", s = 10)
                 PyPlot.plot(1:length(m), m, "-", color="blue")
-                PyPlot.title("Wolff for T=$temp for size $size ($(length(m)) iterations and H=$h)")
+                PyPlot.title("Wolff for T=$temp for size 50 ($(length(m)) iterations and H=$h)")
                 PyPlot.xlabel("Number of Iterations")
                 PyPlot.ylabel("Magnetization")
                 PyPlot.ylim(0,1.1)

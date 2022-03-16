@@ -39,21 +39,21 @@ end
 
 # Phase diagram (magnetization by temperature) using given algorithm
 function diagram(func::Function;
-                 size::Integer      = 50,    # Size of the grid
-                 ensembles::Integer = 100,    # Number of ensembles
+                 size::Integer      = 30,    # Size of the grid
+                 ensembles::Integer = 50,    # Number of ensembles
                  h::Float64         = 0.0,   # External field
                  mintemp::Float64   = 0.5,   # Starting temperature
                  step::Float64      = 0.02,   # Step of temperatures
                  maxtemp::Float64   = 4.0,   # Final temperature
                  iters::Integer     = 180, # Number of the iterations
-                 plot::Bool         = true,  # Plot flag
-                 verbose::Bool      = true)  # Verbose flag
+                 plot::Bool         = false,  # Plot flag
+                 verbose::Bool      = false)  # Verbose flag
 
     name  = namefunc(func)
     temps = Float64[]
     mags  = Float64[]
     for t in mintemp:step:maxtemp
-        m = mean([func(spingrid(size), h=h, temp=t, iters=iters, plot=false, verbose=false)[end] for i in 1:ensembles])
+        m = mean([func(grid = spingrid(size), h=h, temp=t, iters=iters, plot=false, verbose=false)[end] for i in 1:ensembles])
         if verbose println("(T=$t) Avg. susceptibility after $name: $m") end
 
         push!(temps, t)
@@ -76,4 +76,6 @@ function diagram(func::Function;
     return temps, mags
 end
 
-diagram(wolff!)
+
+
+#diagram(wolff!)

@@ -1,22 +1,21 @@
+from julia.api import Julia
 from functions import *
+from julia import Main
 
-N = 100
+jpath = "C:/Users/adwait/AppData/Local/Programs/Julia-1.7.2/bin/julia.exe"
+jl = Julia(runtime=jpath, compiled_modules=False) 
 
-T = np.arange(0.1, 5, 0.05)
-config = latticegen(N)
-sus = []
-for t in T:
-    susi = []
-    for _ in range(10):
-        config_fin = wolff(config, t, nsteps= 20)
-        susi.append(np.var(config_fin)/t)
-        config = latticegen(N)
-    sus.append(np.mean(susi))
+Main.include("utils.jl")
+Main.include("wolff.jl")
 
-plt.scatter(T, sus, s = 10)
-plt.plot(T, sus)
+mag = jl.eval("wolff!(temp = 2.3, iters = 160)")
+
+autocorr = auto_corr_fast(np.array(mag), 60)
+
+plt.plot(np.arange(len(autocorr)), autocorr)
 plt.grid()
-plt.xlabel('Temperature')
-plt.ylabel('Susceptibility')
-plt.title('Wolff')
+plt.xlabel(r'$\Delta t$')
+plt.ylabel(r'$\langle m(t) m(t+ \Delta t) \rangle - \langle m(t)^2 \rangle$')
+plt.title('Auto-correlation function (T = 2) ')
+plt.xticks(rotation= 40)
 plt.show()
