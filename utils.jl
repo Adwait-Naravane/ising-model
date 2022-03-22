@@ -1,13 +1,15 @@
 include("wolff.jl")
 using  Statistics
 using PyPlot
-
+using KernelDensity, Distributions,Random,StatsPlots
 randspin()                               = [1,-1][rand(1:2)] # Generate a random spin
 spingrid(n::Int)                         = [randspin() for i in 1:n, j in 1:n] # Generate a random spin array
 magnetization(a::Array{Int, 2})          = mean(a) |> abs # Get magnetizations of the grid
 susceptibility(a::Array{Int, 2})         = var(a)
 namefunc(f::Function)                    = "$f"[1:end-1]  # Get the simplified name of a function
 nspins(a::Array{Int, 2}, i::Int, j::Int) = [a[x,y] for (x,y) in neighbors(a,i,j)] # Get surrounding spins
+mode(a::Array{Float64}) = findmax(kde(a).density)
+
 
 # Flip a spin
 function flip!(grid::Array{Int, 2}, cluster::BitArray{2})
@@ -40,11 +42,11 @@ end
 # Phase diagram (magnetization by temperature) using given algorithm
 function diagram(func::Function;
                  size::Integer      = 50,    # Size of the grid
-                 ensembles::Integer = 50,    # Number of ensembles
+                 ensembles::Integer = 300,    # Number of ensembles
                  h::Float64         = 0.0,   # External field
-                 mintemp::Float64   = 0.5,   # Starting temperature
-                 step::Float64      = 0.05,   # Step of temperatures
-                 maxtemp::Float64   = 4.0,   # Final temperature
+                 mintemp::Float64   = 2.0,   # Starting temperature
+                 step::Float64      = 0.01,   # Step of temperatures
+                 maxtemp::Float64   = 2.5,   # Final temperature
                  iters::Integer     = 150, # Number of the iterations
                  plot::Bool         = true,  # Plot flag
                  verbose::Bool      = true)  # Verbose flag
