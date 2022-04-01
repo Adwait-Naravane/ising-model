@@ -7,9 +7,11 @@ export neighbors,
        spingrid,
        namefunc,
        wolff!,
-       diagram
+       diagram, 
+       metropolis!
 
 include("utils.jl")
 include("wolff.jl")
+include("metropolis.jl")
 
 end # module

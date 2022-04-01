@@ -81,3 +81,12 @@ def auto_corr_fast(M, kappa):
     G /= N - np.arange(N); G /= G[0]
     G = G[:kappa]
     return G
+    
+def auto_corr(M, kappa):
+#   The autocorrelation has to be truncated at some point so there are enough
+#   data points constructing each lag. Let kappa be the cutoff
+    auto_corr = np.zeros(kappa-1)
+    mu = np.mean(M)
+    for s in range(1,kappa-1):
+        auto_corr[s] = np.mean( (M[:-s]-mu) * (M[s:]-mu) ) / np.var(M)
+    return auto_corr

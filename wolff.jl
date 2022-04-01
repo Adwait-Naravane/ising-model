@@ -36,10 +36,11 @@ function wolff!(grid::Array{Int, 2};
 # Run the algorithm and calculate the final magnetization
                 recursion_wolff!(grid, cluster, x, y, h=h, temp=temp)
 # Calculate ΔE
-                ΔE = -2h*clusterspin(grid, cluster)
+           #     ΔE = -2h*clusterspin(grid, cluster)
 # Change spin accordingly
-                if ΔE <= 0 || rand() < exp(-ΔE) flip!(grid, cluster) end
-                push!(m, magnetization(grid))
+           #     if ΔE <= 0 || rand() < exp(-ΔE) flip!(grid, cluster) end
+                flip!(grid, cluster)
+                push!(m, susceptibility(grid, temp))
         end
 
         if verbose println("(T=$temp) Wolff ended with magnetization $(m[end]) after $iters iterations") end
